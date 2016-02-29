@@ -27,7 +27,7 @@ Both ServiceType and AnnotationKey's code value must be unique. If you're writin
 * ServiceType codes for private use
   * Server: 1900 ~ 1999
   * DB client: 2900 ~ 2999
-  * Cache client: 8999 ~ 8999
+  * Cache client: 8900 ~ 8999
   * RPC client: 9900 ~ 9999
   * Others: 7500 ~ 7999
 
