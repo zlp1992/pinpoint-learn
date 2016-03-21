@@ -42,7 +42,7 @@ A TransformCallback transforms a target class by adding interceptors, getters an
 
 
 # Integration Test
-You can run plugin integration tests with [PinointPluginTestSuite](https://github.com/naver/pinpoint/blob/master/test/src/main/java/com/navercorp/pinpoint/test/plugin/PinpointPluginTestSuite.java), a JUnit Runner. It downloads required dependencies from maven repositories and launch a new JVM with Pinpoint profiler agent and dependencies. On that JVM, JUnit tests are executed.
+You can run plugin integration tests (`mvn integration-test`) with [PinointPluginTestSuite](https://github.com/naver/pinpoint/blob/master/test/src/main/java/com/navercorp/pinpoint/test/plugin/PinpointPluginTestSuite.java), a JUnit Runner. It downloads required dependencies from maven repositories and launch a new JVM with Pinpoint profiler agent and dependencies. On that JVM, JUnit tests are executed.
 
 To run plugin integration test, it needs a complete agent distribution. That's why integration tests are in plugin-sample-agent module.
 
