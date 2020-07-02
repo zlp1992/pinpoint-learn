@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.navercorp.pinpoint</groupId>
         <artifactId>plugin-sample</artifactId>
-        <version>1.9.0-SNAPSHOT</version>
+        <version>2.0.3</version>
     </parent>
 
     <artifactId>plugin-sample-agent</artifactId>
