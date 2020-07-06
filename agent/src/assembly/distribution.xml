@@ -52,7 +52,16 @@
         <useProjectArtifact>false</useProjectArtifact>
         <useTransitiveFiltering>true</useTransitiveFiltering>
     </dependencySet>
-    <dependencySet>
+      <dependencySet>
+          <includes>
+              <include>com.navercorp.pinpoint:pinpoint-commons-buffer</include>
+              <include>com.navercorp.pinpoint:pinpoint-commons-profiler</include>
+          </includes>
+          <outputDirectory>lib</outputDirectory>
+          <useProjectArtifact>false</useProjectArtifact>
+          <useTransitiveFiltering>false</useTransitiveFiltering>
+      </dependencySet>
+      <dependencySet>
         <includes>
             <include>com.navercorp.pinpoint:plugin-sample-plugin</include>
         </includes>
