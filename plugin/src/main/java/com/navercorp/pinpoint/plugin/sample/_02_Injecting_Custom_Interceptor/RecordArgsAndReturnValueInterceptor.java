@@ -33,12 +33,12 @@ import com.navercorp.pinpoint.common.trace.AnnotationKey;
 import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 
 /**
- * <strong>It is strongly recommended that you extend SpanEventSimpleAroundInterceptorForPlugin.</strong>
- * It contains most of the boiler plate code for implementing a basic interceptor.
+ * <strong>强烈建议你编写插件的时候继承 SpanEventSimpleAroundInterceptorForPlugin.</strong>
+ *  它包含了实现一个基本的拦截器类所需的大部分模板代码.下面这个拦截器展示了如何记录一个带参数的方法调用以及它的返回值.
  * <p>
- * This interceptor shows how to record a method invocation with it's arguments and return value.
+ *  下面这个拦截器展示了如何记录一个带参数的方法调用以及返回值.
  * <p>
- * An interceptor have to implement one of following interfaces:
+ *     拦截器必须实现下列中的任一接口：
  * <ul>
  * <li>{@link AroundInterceptor}</li>
  * <li>{@link AroundInterceptor0}</li>
@@ -49,11 +49,9 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
  * <li>{@link AroundInterceptor5}</li>
  * <li>{@link StaticAroundInterceptor}</li>
  * </ul>
- * Differences between these interfaces are, number of arguments the intercepter receives and at which point the target
- * method is intercepted.
+ * 这些接口的不同之处是：当目标方法被拦截时，拦截器接收的参数个数不一样。
  * <p>
- * This sample interceptor implements AroundInterceptor1 which intercepts before and after the target method execution,
- * and receives one argument of the method.
+ *     下面这个样例中的拦截器实现了AroundInterceptor1，它在执行目标方法之前和之后进行拦截，同时接收一个参数.
  *
  * @see SpanEventSimpleAroundInterceptorForPlugin
  */
@@ -65,58 +63,74 @@ public class RecordArgsAndReturnValueInterceptor implements AroundInterceptor1 {
     private final MethodDescriptor descriptor;
     private final TraceContext traceContext;
 
-    // An interceptor receives Pinpoint objects as constructor arguments. 
+    // 拦截器类可以将Pinpoint自身的对下作为构造方法参数，这些参数会自动注入
     public RecordArgsAndReturnValueInterceptor(TraceContext traceContext, MethodDescriptor descriptor) {
         this.traceContext = traceContext;
         this.descriptor = descriptor;
     }
-    
+
+    /**
+     * 此方法会在目标方法调用之前调用
+     * @param target 目标类
+     * @param arg0 参数
+     * */
     @Override
     public void before(Object target, Object arg0) {
         if (isDebug) {
             logger.beforeInterceptor(target, new Object[] { arg0 } );
         }
 
-        // 1. Get Trace. It's null when current transaction is not being profiled.
+        // 1. 获取Trace. 当不分析当前事务时(transaction)为null，这里也即当当前没有transaction或者此条transaction没被采样时返回null
         Trace trace = traceContext.currentTraceObject();
         if (trace == null) {
             return;
         }
 
-        // 2. Begin a trace block.
+        // 2. 开始一个追踪块trace block（即SpanEvent）
         trace.traceBlockBegin();
     }
 
+    /**
+     * 此方法会在目标方法调用之后调用
+     * @param target 目标类
+     * @param arg0 参数
+     * @param result 目标方法执行返回值
+     * @param throwable 目标方法执行抛出的异常
+     * */
     @Override
     public void after(Object target, Object arg0, Object result, Throwable throwable) {
         if (isDebug) {
             logger.afterInterceptor(target, new Object[] { arg0 });
         }
 
-        // 1. Get Trace.
+        // 1. 获取Trace
         Trace trace = traceContext.currentTraceObject();
         if (trace == null) {
             return;
         }
 
         try {
-            // 2. Get current span event recorder
+            // 2. 获取当前的Span event记录器
             SpanEventRecorder recorder = trace.currentSpanEventRecorder();
 
-            // 3. Record service type
+            // 3. 记录Service-type
             recorder.recordServiceType(SamplePluginConstants.MY_SERVICE_TYPE);
             
-            // 4. record method signature and arguments 
+            // 4. 记录方法签名和参数
             recorder.recordApi(descriptor, new Object[] { arg0 });
             
-            // 5. record exception if any.
+            // 5. 记录异常（如果有的话）
             recorder.recordException(throwable);
             
-            // 6. Trace doesn't provide a method to record return value. You have to record it as an attribute.
+            // 6. Trace没有提供方法记录方法的返回值，所以需要将返回值记录成一个属性
             recorder.recordAttribute(AnnotationKey.RETURN_DATA, result);
         } finally {
-            // 7. End trace block.
+            // 7. 结束追踪块
             trace.traceBlockEnd();
         }
+        /*
+        * 看到这里是不是有点摸清插件编写的套路了，在before方法里通过traceBlockBegin开启一个SpanEvent，在after里通过traceBlockEnd关闭这个SpanEvent
+        * 一个方法执行结束了，一个SpanEvent也就结束了，所以简单理解一个SpanEvent代表一次方法执行
+        * */
     }
 }

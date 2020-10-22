@@ -1,6 +1,8 @@
 
 
-此项目最初fork pinpoint官方插件样例（https://github.com/pinpoint-apm/pinpoint-plugin-sample），项目旨在介绍pinpoint使用及原理等内容，欢迎贡献
+此项目最初fork pinpoint官方插件样例（https://github.com/pinpoint-apm/pinpoint-plugin-sample）
+
+项目旨在介绍pinpoint使用及原理等内容，欢迎贡献
 
 
 
@@ -45,4 +47,6 @@ ServiceType 和 AnnotationKey的code 必须唯一. 如果你编写的是个人�
 分析插件会添加 [TransformCallback](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/instrument/transformer/TransformCallback.java)s 到Pinpoint。
 
 TransformCallback通过添加拦截器、getter以及字段变量转换目标类，可以在样例工程中看到。
+
+样例工程中哪个插件拦截的哪个类，可以在实现了```ProfilerPlugin```的类```SamplePlugin```中看到
 

@@ -27,23 +27,24 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 import static com.navercorp.pinpoint.common.util.VarArgs.va;
 
 /**
- * Pinpiont provides {@link BasicMethodInterceptor} which records method execution time and exception.
- * This example shows how to inject it to a method. It also shows how to pass constructor arguments to the interceptor.
+ * Pinpoint提供了一个基本拦截器 BasicMethodInterceptor 记录方法的执行时间和异常，
+ * 以下代码展示了如何在方法中注入这个拦截器，同时也展示了如何给拦截器的构造方法传递参数
+ * 这个transform注入的是类 {@linkplain com.navercorp.plugin.sample.target.TargetClass01}
  */
 public class Sample_01_Inject_BasicMethodInterceptor implements TransformCallback {
 
     @Override
     public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
-        // 1. Get InstrumentClass of the target class
+        // 1. 获取目标类对应的织入类，Pinpoint中使用InstrumentClass包装需要拦截的类，方便进行代码增强
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
         
-        // 2. Get InstrumentMethod of the target method.
+        // 2. 获取目标方法对应的织入类，Pinpoint中使用InstrumentMethod包装需要拦截的方法
         InstrumentMethod targetMethod = target.getDeclaredMethod("targetMethod", "java.lang.String");
-        
-        // 3. Add interceptor. The first argument is FQN of the interceptor class, followed by arguments for the interceptor's constructor.
+
+        // 3. 给方法添加拦截器. 第一个参数是拦截器类, 后面是拦截器类构造方法的参数，使用va将参数转换成Object[]数组
         targetMethod.addInterceptor(BasicMethodInterceptor.class, va(SamplePluginConstants.MY_SERVICE_TYPE));
         
-        // 4. Return resulting byte code.
+        // 4. 返回修改后的字节码
         return target.toBytecode();
     }
 

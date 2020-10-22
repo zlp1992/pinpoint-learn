@@ -24,9 +24,9 @@ import com.navercorp.pinpoint.bootstrap.instrument.transformer.TransformCallback
 import com.navercorp.pinpoint.plugin.sample._11_Configuration_And_ObjectRecipe.HelloInterceptor;
 
 /**
- * This sample shows you how to inject your very own, custom interceptor.
- * See {@link HelloInterceptor}
- * to learn how to write an interceptor.
+ * 下面这个例子展示了如何注入自定义的拦截器。
+ * 这个transform注入的是类 {@linkplain com.navercorp.plugin.sample.target.TargetClass02}
+ * See {@link HelloInterceptor}to learn how to write an interceptor.
  */
 public class Sample_02_Inject_Custom_Interceptor implements TransformCallback {
 
