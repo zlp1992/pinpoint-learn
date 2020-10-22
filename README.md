@@ -1,69 +1,48 @@
-# Pinpoint Profiler Plugin Sample
 
-You can extend Pinoint's profiling ability by writing a Pinpoint profiler plugin. This sample project shows how to write it. It consists of 3 modules:
 
-* plugin-sample-target: target library
-* plugin-sample-plugin: sample plugin
+此项目最初fork pinpoint官方插件样例（https://github.com/pinpoint-apm/pinpoint-plugin-sample），项目旨在介绍pinpoint使用及原理等内容，欢迎贡献
+
+
+
+# Pinpoint 分析插件样例
+
+你可以通过编写pinpoint分析插件扩展pinpoint的分析能力。此样例工程展示了如何编写插件，工程包含三个模块：
+
+* plugin-sample-target: 目标类库
+* plugin-sample-plugin: 样例插件
 * plugin-sample-agent: agent distribution with sample plugin
 
 
-# Implementing a Profiler Plugin
-A Pinpoint profiler plugin have to provide implementations of [ProfilerPlugin](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/plugin/ProfilerPlugin.java) and [TraceMetadataProvider](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/TraceMetadataProvider.java)
-`ProfilerPlugin` is used by Pinpoint Agent only while `TraceMetadataProvider` is used by Pinpoint Agent, Collector and Web.
+# 实现一个分析插件
+Pinpoint分析插件必须实现 [ProfilerPlugin](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/plugin/ProfilerPlugin.java) 以及 [TraceMetadataProvider](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/TraceMetadataProvider.java)
+`ProfilerPlugin` 只会在agent使用， `TraceMetadataProvider` 会被Pinpoint的agent、collector和web都使用。
 
-Pinpoint loads these implementations by Java's [ServiceLoader](https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html). So an plugin JAR must contains two provider-configuration files.
+Pinpoint 通过Java的 [ServiceLoader](https://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html)加载上述提到的实现类。因此插件jar包必须包含下面两个配置文件：
 
 * META-INF/services/com.navercorp.pinpoint.bootstrap.plugin.ProfilerPlugin
 * META-INF/services/com.navercorp.pinpoint.common.trace.TraceMetadataProvider 
 
-Each file should contains fully qualified names of the implementation classes.
+每个文件里必须包含实现类的类全名。
 
 
 ### TraceMetadataProvider
-A TraceMetadataProvider adds [ServiceType](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/ServiceType.java)s and [AnnotationKey](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/AnnotationKey.java)s to Pinpoint.
+Pinpoint通过 TraceMetadataProvider 添加 [ServiceType](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/ServiceType.java)s 以及 [AnnotationKey](https://github.com/naver/pinpoint/blob/master/commons/src/main/java/com/navercorp/pinpoint/common/trace/AnnotationKey.java)s 。
 
-Both ServiceType and AnnotationKey's code value must be unique. If you're writing a private plugin, you can use code values reserved for private usage. Pinpoint will not assign these values to anything. Otherwise you have to contact Pinpoint dev team to allocate codes for the plugin. 
+ServiceType 和 AnnotationKey的code 必须唯一. 如果你编写的是个人私有的插件， 你可以使用pinpoint提供的保留的私有code，Pinpoint不会将这些私有code用到其他任何地方 。如果你是开发一个公用的插件，你需要联系Pinpoint开发团队给你的插件分配code。
 
-* ServiceType codes for private use
+* 个人私人使用的ServiceType codes如下：
   * Server: 1900 ~ 1999
   * DB client: 2900 ~ 2999
   * Cache client: 8900 ~ 8999
   * RPC client: 9900 ~ 9999
   * Others: 7500 ~ 7999
 
-* AnnotaionKey codes for private use
+* 个人私人使用的AnnotaionKey codes 如下：
   * 900 ~ 999
 
 
 ### ProfilerPlugin
-A ProfilerPlugin adds [TransformCallback](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/instrument/transformer/TransformCallback.java)s to Pinpoint.
+分析插件会添加 [TransformCallback](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/instrument/transformer/TransformCallback.java)s 到Pinpoint。
 
-A TransformCallback transforms a target class by adding interceptors, getters and/or fields. You can find example codes in plugin-sample-plugin project.
-
-
-# Integration Test
-You can run plugin integration tests (`mvn integration-test`) with [PinointPluginTestSuite](https://github.com/naver/pinpoint/blob/master/test/src/main/java/com/navercorp/pinpoint/test/plugin/PinpointPluginTestSuite.java), a JUnit Runner. It downloads required dependencies from maven repositories and launch a new JVM with Pinpoint profiler agent and dependencies. On that JVM, JUnit tests are executed.
-
-To run plugin integration test, it needs a complete agent distribution. That's why integration tests are in plugin-sample-agent module.
-
-In test, you can use [PluginTestVerifier](https://github.com/naver/pinpoint/blob/master/bootstrap-core/src/main/java/com/navercorp/pinpoint/bootstrap/plugin/test/PluginTestVerifier.java) to check if traces are recorded correctly.
-
-
-#### Test Dependency
-PinointPluginTestSuite doesn't use the project's dependencies (configured at pom.xml). It uses dependencies listed by @Dependency. In this way, you can test multiple versions of the target library.
-
-Dependencies are declared like this. You can specify versions or version ranges of a dependency.
-```
-@Dependency({"some.group:some-artifact:1.0", "another.group:another-artifact:2.1-RELEASE"})
-@Dependency({"some.group:some-artifact:[1.0,)"})
-@Dependency({"some.group:some-artifact:[1.0,1.9]"})
-@Dependency({"some.group:some-artifact:[1.0],[2.1],[3.2])"})
-```
-PinointPluginTestSuite searches dependencies from local repository and maven central repository. You can add repositories by @Repository.
-
-#### Jvm Version
-You can specify the JVM version for a test by @JvmVersion.
-
-#### Application Test
-PinpointPluginTestSuite is not for an application which has to be launched by its own main class. You can extends [AbstractPinpointPluginTestSuite](https://github.com/naver/pinpoint/blob/master/test/src/main/java/com/navercorp/pinpoint/test/plugin/AbstractPinpointPluginTestSuite.java) and related types to test such applications. 
+TransformCallback通过添加拦截器、getter以及字段变量转换目标类，可以在样例工程中看到。
 
