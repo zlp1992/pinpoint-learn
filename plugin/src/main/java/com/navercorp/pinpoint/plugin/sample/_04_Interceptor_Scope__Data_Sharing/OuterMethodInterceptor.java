@@ -25,9 +25,14 @@ import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScopeInvoca
 import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 
 /**
- * This interceptor attaches an object to the current {@link InterceptorScopeInvocation} to let
- * {@link InnerMethodInterceptor} know if the current transaction is being traced and would need a return value.
- *
+ * 此拦截器附加对象到当前的{@link InterceptorScopeInvocation}，能够让{@link InnerMethodInterceptor}知道当前的transaction是否被追踪同时获取返回值
+ * 注意看类 {@linkplain com.navercorp.plugin.sample.target.TargetClass04}，两个拦截器的执行顺序如下
+ * <p>
+ *  <li>OuterMethodInterceptor.before</li>
+ *  <li>InnerMethodInterceptor.before</li>
+ *  <li>InnerMethodInterceptor.after</li>
+ *  <li>OuterMethodInterceptor.after</li>
+ * </p>
  * @see Sample_04_Interceptors_In_A_Scope_Share_Value
  * @author Jongho Moon
  */
@@ -67,7 +72,7 @@ public class OuterMethodInterceptor implements AroundInterceptor1 {
         SpanEventRecorder recorder = trace.traceBlockBegin();
         recorder.recordServiceType(SamplePluginConstants.MY_SERVICE_TYPE);
 
-        // create or get attachment
+        // 创建或获取附加对象 attachment
         MyAttachment attachment = (MyAttachment)scope.getCurrentInvocation().getOrCreateAttachment(ATTACHMENT_FACTORY);
         attachment.setTrace(shouldTrace);
     }
@@ -91,7 +96,7 @@ public class OuterMethodInterceptor implements AroundInterceptor1 {
             recorder.recordApi(descriptor, new Object[] { arg0 });
             recorder.recordException(throwable);
             
-            // record the value set by InnerMethodInterceptor
+            // 记录InnerMethodInterceptor拦截器设置的值
             recorder.recordAttribute(SamplePluginConstants.ANNOTATION_KEY_MY_VALUE, attachment.getValue());
         } finally {
             trace.traceBlockEnd();

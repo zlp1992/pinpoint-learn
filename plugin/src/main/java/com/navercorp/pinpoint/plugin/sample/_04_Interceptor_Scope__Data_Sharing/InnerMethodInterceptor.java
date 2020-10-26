@@ -19,14 +19,14 @@ import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScopeInvocation;
 
 /**
- * This interceptor uses {@link InterceptorScopeInvocation} to receive <tt>MyAttachment</tt> for a flag to see if the
- * current transaction is being traced. If so, the return value is then set to the attachment so that it can be passed
- * on to {@link OuterMethodInterceptor}.
+ * 此拦截器使用{@link InterceptorScopeInvocation}获取<tt>MyAttachment</tt>对象，取里面的标识判断当前transaction是否被追踪
+ * 如果被追踪，则设置返回值到附加对象里以便传递给{@link OuterMethodInterceptor}
+ *
  */
 public class InnerMethodInterceptor implements AroundInterceptor0 {
     private final InterceptorScope scope;
 
-    // An interceptor receives an InterceptorScope through its constructor
+    // 拦截器，通过构造方法获取 InterceptorScope ，pinpoint会自动注入
     public InnerMethodInterceptor(InterceptorScope scope) {
         this.scope = scope;
     }
@@ -38,6 +38,7 @@ public class InnerMethodInterceptor implements AroundInterceptor0 {
 
     @Override
     public void after(Object target, Object result, Throwable throwable) {
+        //这里拿到OuterMethodInterceptor添加的附加对象
         MyAttachment attachment = (MyAttachment)scope.getCurrentInvocation().getAttachment();
         
         if (attachment.isTrace()) {

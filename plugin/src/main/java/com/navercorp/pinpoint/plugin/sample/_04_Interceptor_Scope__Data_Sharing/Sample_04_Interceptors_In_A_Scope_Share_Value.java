@@ -25,12 +25,11 @@ import com.navercorp.pinpoint.bootstrap.interceptor.scope.ExecutionPolicy;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 
 /**
- * Sometimes interceptors need to share data with others to trace a transaction. An example of this is when tracing a
- * RPC client where the destination address needed by an interceptor at the end of the chain can only be acquired by
- * some other interceptor further up in the chain.
+ * 有时候在追踪链路中，拦截器需要和其他拦截器共享数据，
+ * 这样的一个示例便是在跟踪RPC客户端时，其中链末端的拦截器所需的目标地址只能由链中更远的其他某些拦截器获取。.
  * <p>
- * For this purpose, you may attach objects to {@link InterceptorScope} to share them between interceptors having the
- * same scope.
+ * 出于这个目的，你可以在两个有相同scope的拦截器通过附加对象到{@link InterceptorScope}从而共享数据
+ *
  */
 public class Sample_04_Interceptors_In_A_Scope_Share_Value implements TransformCallback {
 
@@ -38,14 +37,14 @@ public class Sample_04_Interceptors_In_A_Scope_Share_Value implements TransformC
     public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
         
-        // Get the scope object from Instrumentor
+        // 从Instrumentor获取scope对象
         InterceptorScope scope = instrumentor.getInterceptorScope("SAMPLE_04_SCOPE");
 
-        // Interceptors that need to share data must have the same scope.
+        // 需要共享数据的拦截器必须有相同的scope
         InstrumentMethod outerMethod = target.getDeclaredMethod("outerMethod", "java.lang.String");
         outerMethod.addScopedInterceptor(OuterMethodInterceptor.class, scope);
         
-        // Note that execution policy of InnerMethodInterceptor is INTERNAL to make the interceptor execute only when the other interceptor in the scope is active.
+        //注意，InnerMethodInterceptor的执行策略设置为INTERNAL，这样只有在同一个scope范围内已经有其他的拦截器处于活跃状态，这个拦截器才能执行
         InstrumentMethod innerMethod = target.getDeclaredMethod("innerMethod", "java.lang.String");
         innerMethod.addScopedInterceptor(InnerMethodInterceptor.class, scope, ExecutionPolicy.INTERNAL);
         
