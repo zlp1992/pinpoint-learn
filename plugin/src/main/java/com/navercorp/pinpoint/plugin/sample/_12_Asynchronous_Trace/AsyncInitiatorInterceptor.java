@@ -24,7 +24,7 @@ import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 
 /**
- * To trace async invocations, you have to begin with the method initiating an async task.
+ * 为了追踪异步调用，得先从初始化异步任务的方法开始
  */
 public class AsyncInitiatorInterceptor implements AroundInterceptor1 {
     private final MethodDescriptor descriptor;
@@ -48,14 +48,14 @@ public class AsyncInitiatorInterceptor implements AroundInterceptor1 {
         recorder.recordServiceType(SamplePluginConstants.MY_SERVICE_TYPE);
         recorder.recordApi(descriptor, new Object[] { arg0 });
 
-        // To trace async invocations, you have to create AsyncContext like below, automatically attaching it to the current span event.
+        // 为了追踪异步调用，你必须像下面这样创建AsyncContext对象, AsyncContext对象会自动附加到当前的Span event.
         AsyncContext asyncContext = recorder.recordNextAsyncContext();
         
-        // Finally, you have to pass the AsyncContext to the thread which handles the async task.
-        // How to do this depends on the target library implementation.
+        // 最后，你必须将AsyncContext异步上下文传递给处理异步任务的线程
+        // 如何传递取决于目标类库的实现
         // 
-        // In this sample, we set the id as scope invocation attachment like below to pass it to the constructor interceptor of TargetClass12_Worker which has run() method that handles the async task.
-        // Then the constructor interceptor will get the attached AsyncContext and set to the initializing TargetClass12_Worker object.
+        // 在这个例子中，我们将异步上下文作为scope调用的附加信息，将它传递给TargetClass12_Worker（它的run方法处理异步任务）的构造方法拦截器，
+        // 接着构造方法拦截器会获取附加的异步上下文，并将其设置到初始化的 TargetClass12_Worker 对象.
         scope.getCurrentInvocation().setAttachment(asyncContext);
     }
 

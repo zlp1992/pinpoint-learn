@@ -27,7 +27,7 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 import static com.navercorp.pinpoint.common.util.VarArgs.va;
 
 /**
- * You can also inject interceptors to constructors.
+ * 你也可以在构造方法上注入拦截器
  */
 public class Sample_05_Constructor_Interceptor implements TransformCallback {
 
@@ -35,7 +35,7 @@ public class Sample_05_Constructor_Interceptor implements TransformCallback {
     public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
         
-        // Note that getConstructor() returns InstrumentMethod
+        // 注意到 getConstructor() 返回构造方法 InstrumentMethod
         InstrumentMethod targetConstructor = target.getConstructor("java.lang.String");
         targetConstructor.addInterceptor(BasicMethodInterceptor.class, va(SamplePluginConstants.MY_SERVICE_TYPE));
         

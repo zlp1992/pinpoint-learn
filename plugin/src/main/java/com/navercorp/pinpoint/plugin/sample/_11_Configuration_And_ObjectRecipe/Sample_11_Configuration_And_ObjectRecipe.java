@@ -25,19 +25,18 @@ import com.navercorp.pinpoint.bootstrap.instrument.transformer.TransformCallback
 import com.navercorp.pinpoint.bootstrap.plugin.ObjectFactory;
 
 /**
- * ProfilerPlugin and PinpointClassFileTransformer implementation classes are loaded by a plugin class loader whose
- * parent is the system class loader when Pinpoint agent is initialized. However, interceptor classes are loaded by the
- * class loader which loads the actual target class, and these target class loaders cannot see the plugin classloader.
+ * 当Pinpoint agent初始化的时候，ProfilerPlugin和PinpointClassFileTransformer的实现类是通过插件类加载器加载的，插件类加载器的父加载器是
+ * 系统类加载器（system class loader ）。然而，拦截器类是由加载实际目标类的加载器加载，这些加载目标类的加载器无法看到插件类加载器。
  * <p>
- * Therefore for a class X in a plugin, X in ProfilerPlugin and PinpointClassFileTransformer implementations and X in
- * interceptor implementations are different. This makes it impossible for a transformer to pass an object whose type is defined in the plugin to a interceptor as
- * it's constructor argument.
+ *     因此对于插件中的类X，ProfilerPlugin以及PinpointClassFileTransformer实现类X和拦截器实现类X是不同的，
+ *     这使得transformer无法传递一个定义在插件中的类作为拦截器的构造方法参数
  * <p>
+ *     为了处理这个问题，你可以传递一个{@link ObjectFactory}，其描述了如何创建参数
  * To handle this problem, you can pass an {@link ObjectFactory} which describes how to create the argument.
  * <p>
- * Note that, for the same reason, you should avoid sharing values by static variables of classes defined in a plugin.
+ *     注意，基于同样的原因，你应该避免通过将插件中的类定义为静态变量来实现共享
  * <p>
- * This sample also shows how to read configurations in pinpoint.config file via {@link ProfilerConfig}.
+ *     这里例子同样展示了如何通过{@link ProfilerConfig}读取 pinpoint.config文件中的配置
  */
 public class Sample_11_Configuration_And_ObjectRecipe implements TransformCallback {
 
@@ -46,11 +45,11 @@ public class Sample_11_Configuration_And_ObjectRecipe implements TransformCallba
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
         InstrumentMethod targetMethod = target.getDeclaredMethod("hello", "java.lang.String");
         
-        // Get ProfilerConfig
+        // 获取 ProfilerConfig
         ProfilerConfig config = instrumentor.getProfilerConfig();
         int maxLen = config.readInt("profiler.sample11.maxLen", 8);
         
-        // If you pass StringTrimmer object directly like below, Pinpoint agent fails to create the interceptor instance. 
+        // 如果你像下面这样直接传递StringTrimmer对象, Pinpoint agent 将会无法创建这个拦截器实例
         // targetMethod.addInterceptor("com.navercorp.pinpoint.plugin.sample._11_Configuration_And_ObjectRecipe.HelloInterceptor", new StringTrimmer(maxLen));
         
         ObjectFactory trimmerFactory = ObjectFactory.byConstructor("com.navercorp.pinpoint.plugin.sample._11_Configuration_And_ObjectRecipe.StringTrimmer", maxLen);

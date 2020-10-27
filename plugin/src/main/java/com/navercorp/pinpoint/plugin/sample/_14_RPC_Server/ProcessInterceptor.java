@@ -28,7 +28,7 @@ import com.navercorp.plugin.sample.target.TargetClass14_Request;
 import com.navercorp.plugin.sample.target.TargetClass14_Server;
 
 /**
- * You'd better extend {@link SpanSimpleAroundInterceptor} to write a server application interceptor.
+ * 最好通过继承{@link SpanSimpleAroundInterceptor}来编写server端应用拦截器
  * 
  * @author Jongho Moon
  */
@@ -39,10 +39,10 @@ public class ProcessInterceptor extends SpanSimpleAroundInterceptor {
     
 
     /**
-     * In this method, you have to check if the current request contains following informations:
+     * 在这个方法中，你必须检查当前请求是否包含以下信息：
      * 
-     * 1. Marker that indicates this transaction must not be traced
-     * 2. Data required to continue tracing a transaction. transaction id, paraent id and so on. 
+     * 1. 是否有标记来标识当前请求不应该被追踪
+     * 2. 继续追踪所必须的数据，transaction id、parent id等等
      * 
      * Then you have to create appropriate Trace object.
      */
@@ -50,19 +50,19 @@ public class ProcessInterceptor extends SpanSimpleAroundInterceptor {
     protected Trace createTrace(Object target, Object[] args) {
         TargetClass14_Request request = (TargetClass14_Request)args[0];
         
-        // If this transaction is not traceable, mark as disabled.
+        // 如果此transaction 不能被追踪, 标记为不被追踪.
         if (request.getMetadata(SamplePluginConstants.META_DO_NOT_TRACE) != null) {
             return traceContext.disableSampling();
         }
         
         String transactionId = request.getMetadata(SamplePluginConstants.META_TRANSACTION_ID);
 
-        // If there's no trasanction id, a new trasaction begins here. 
+        // 如果没有transaction id, 开启一个新的trasaction进行追踪
         if (transactionId == null) {
             return traceContext.newTraceObject();
         }
 
-        // otherwise, continue tracing with given data.
+        // 否则，根据已有数据继续追踪
         long parentSpanID = NumberUtils.parseLong(request.getMetadata(SamplePluginConstants.META_PARENT_SPAN_ID), SpanId.NULL);
         long spanID = NumberUtils.parseLong(request.getMetadata(SamplePluginConstants.META_SPAN_ID), SpanId.NULL);
         short flags = NumberUtils.parseShort(request.getMetadata(SamplePluginConstants.META_FLAGS), (short) 0);
@@ -77,15 +77,15 @@ public class ProcessInterceptor extends SpanSimpleAroundInterceptor {
         TargetClass14_Server server = (TargetClass14_Server)target;
         TargetClass14_Request request = (TargetClass14_Request)args[0];
         
-        // You have to record a service type within Server range. 
+        // 你必须在服务端范围内记录服务类型（service type）
         recorder.recordServiceType(SamplePluginConstants.MY_RPC_SERVER_SERVICE_TYPE);
         
-        // Record rpc name, client address, server address.
+        // 记录rpc名称，客户端地址，服务端地址
         recorder.recordRpcName(request.getProcedure());
         recorder.recordEndPoint(server.getAddress());
         recorder.recordRemoteAddress(request.getClientAddress());
 
-        // If this transaction did not begin here, record parent(client who sent this request) information 
+        // 如果不是请求的根节点（即请求不是从当前节点发出），记录父节点（发出这个请求的client）信息
         if (!recorder.isRoot()) {
             String parentApplicationName = request.getMetadata(SamplePluginConstants.META_PARENT_APPLICATION_NAME);
             

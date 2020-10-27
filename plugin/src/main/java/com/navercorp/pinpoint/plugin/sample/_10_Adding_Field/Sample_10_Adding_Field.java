@@ -25,12 +25,11 @@ import com.navercorp.plugin.sample.target.TargetClass10_Message;
 import com.navercorp.plugin.sample.target.TargetClass10_Producer;
 
 /**
- * You can add a field to a class to attach some trace values.
+ * 你可以给目标类添加字段来附加一些追踪数据
  * 
- * In this sample, we are going to to trace {@link TargetClass10_Consumer#consume(TargetClass10_Message)} with the
- * producer name. But since we can not retrieve the producer name in that method, we intercept
- * {@link TargetClass10_Producer#produce()} to inject producer name into the returning {@link TargetClass10_Message}
- * instance.
+ * 在这个例子中，我们将使用生产者的名字来追踪 {@link TargetClass10_Consumer#consume(TargetClass10_Message)}。
+ * 但是考虑到我们无法在这个方法里获取到生产者的名字，
+ * 我们拦截{@link TargetClass10_Producer#produce()}来注入生产者的名字到返回对象{@link TargetClass10_Message}
  */
 public class Sample_10_Adding_Field {
 
@@ -64,7 +63,7 @@ public class Sample_10_Adding_Field {
         public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
             InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
 
-            // Add field to the message class. Note that you don't need to provide the field name. 
+            // 给类添加字段，注意到你不需要提供字段名
             target.addField(ProducerNameAccessor.class);
 
             return target.toBytecode();

@@ -53,7 +53,7 @@ public class ConsumerInterceptor implements AroundInterceptor1 {
             recorder.recordApi(descriptor);
             recorder.recordException(throwable);
             
-            // Cast to the accessor type to get the value.
+            // 转换成访问接口类型来获取值
             String producerName = ((ProducerNameAccessor)arg0)._$PINPOINT$_getProducerName();
             recorder.recordAttribute(SamplePluginConstants.ANNOTATION_KEY_MY_VALUE, producerName);
         } finally {

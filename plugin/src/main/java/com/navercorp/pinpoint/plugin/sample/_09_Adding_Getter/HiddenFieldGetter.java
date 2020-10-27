@@ -15,7 +15,8 @@
 package com.navercorp.pinpoint.plugin.sample._09_Adding_Getter;
 
 /**
- * Getter interface implemented by the target class.
+ * 目标类实现的Getter接口
+ * 最好方法名命名唯一从而避免重复
  * You'd better name methods uniquely to prevent duplication.
  * 
  * @author Jongho Moon

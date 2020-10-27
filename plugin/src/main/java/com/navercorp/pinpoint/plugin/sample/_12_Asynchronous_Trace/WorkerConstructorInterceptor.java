@@ -21,8 +21,8 @@ import com.navercorp.pinpoint.bootstrap.interceptor.annotation.IgnoreMethod;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 
 /**
- * This interceptor retrieves <tt>AsyncContext</tt> from interceptor scope invocation attachment and sets it to
- * <tt>this</tt> object through {@link AsyncContextAccessor}.
+ * 拦截器从拦截器范围调用附加信息interceptor scope invocation attachment 中获取异步上下文<tt>AsyncContext</tt>
+ * 并通过{@link AsyncContextAccessor}设置到自身this对象中
  */
 public class WorkerConstructorInterceptor implements AroundInterceptor2 {
     private final InterceptorScope scope;

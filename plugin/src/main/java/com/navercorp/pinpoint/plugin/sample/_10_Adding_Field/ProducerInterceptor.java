@@ -30,7 +30,7 @@ public class ProducerInterceptor implements AroundInterceptor0 {
     public void after(Object target, Object result, Throwable throwable) {
         TargetClass10_Producer producer = (TargetClass10_Producer)target;
         
-        // Cast to the accessor type to set the value.
+        // 转换目标类到访问类型（这里即我们添加字段的访问接口类型）来设置值
         ((ProducerNameAccessor)result)._$PINPOINT$_setProducerName(producer.getName());
     }
 }

@@ -15,8 +15,7 @@
 package com.navercorp.pinpoint.plugin.sample._10_Adding_Field;
 
 /**
- * Accessor interface implemented by the target class.
- * You'd better name methods uniquely to prevent duplication.
+ * 目标类实现的访问接口，最好唯一命名方法避免重复
  * 
  * @author Jongho Moon
  */

@@ -28,31 +28,28 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 import static com.navercorp.pinpoint.common.util.VarArgs.va;
 
 /**
- * Constructor interceptors can be scoped as well. But there is a limitation.
+ * 构造方法拦截器同样可以带范围（scope），不过有些限制：
  * <p>
- * Java enforces that the first operation of a constructor must be invocation of a super constructor or an overloaded
- * constructor so any injected code (including interceptor methods) is executed after this. Therefore method invocation
- * order for constructor interceptors is different from that of a normal method.
+ *     Java强制要求构造方法的第一个操作必须是对父构造方法或重载的构造方法的调用，
+ *     任何注入的代码（包括拦截器方法）都在这之后执行。
+ *     因此，构造方法拦截器的方法调用顺序与普通方法不同
  * <p>
- * If method A calls method B, the interceptors are invoked in this order :
+ *     如果方法A调用方法B，拦截器调用顺序如下：
  * <ol>
  * <li><tt>A_interceptor.before();</tt></li>
  * <li><tt>B_interceptor.before();</tt></li>
  * <li><tt>B_interceptor.after();</tt></li>
  * <li><tt>A_interceptor.after();</tt></li>
  * </ol>
- *
- * But if A and B are constructors and A calls B, the interceptors are executed in this order :
+ * 如果A和B都是构造方法，那么拦截器调用顺序将会是下面的顺序：
  * <ol>
  * <li><tt>B_interceptor.before();</tt></li>
  * <li><tt>B_interceptor.after();</tt></li>
  * <li><tt>A_interceptor.before();</tt></li>
  * <li><tt>A_interceptor.after();</tt></li>
  * </ol>
- *
- * This also affects the execution policy of scoped interceptors. For methods, if A and B are in the same scope with
- * execution policy BOUNDARY, B's interceptor is not executed. If A and B were constructors however, both A and B's
- * interceptors are executed as when B's interceptor is executed, it is not with the scope of A's interceptor.
+ * 这同样会影响范围拦截器的执行策略。对于普通方法，如果A和B执行策略都是BOUNDARY并且有相同的scope，那么B的拦截器将不会被执行。
+ * 然而，如果A和B都是构造方法，A和B的拦截都会被执行，当B拦截器执行的时候，它的外层并没有拦截器A
  */
 public class Sample_06_Constructor_Interceptor_Scope_Limitation implements TransformCallback {
 

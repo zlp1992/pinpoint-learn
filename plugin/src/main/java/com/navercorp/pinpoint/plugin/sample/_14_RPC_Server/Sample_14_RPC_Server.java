@@ -22,11 +22,10 @@ import com.navercorp.pinpoint.bootstrap.instrument.Instrumentor;
 import com.navercorp.pinpoint.bootstrap.instrument.transformer.TransformCallback;
 
 /**
- * This example show how to trace a server application.
+ * 这个例子展示了如何追踪服务端应用
  * <p>
- * You shoud intercept the outmost method handling requests and record it as a span not a span event. (All the samples
- * before this recorded span events).<br/>
- * In addition, you have to check if the request contains any trace data.
+ *     你应该拦截最外层处理请求的方法，同时记录成一个Span而不是Span event（在此之前所有的例子都是记录成Span event）<br/>
+ * 此外，你还应该检查下请求是否包含任何追踪数据
  */
 public class Sample_14_RPC_Server implements TransformCallback {
 

@@ -23,17 +23,14 @@ import com.navercorp.pinpoint.bootstrap.interceptor.AsyncContextSpanEventSimpleA
 import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 
 /**
- * This interceptor intercepts run() method, which handles the async task.
+ * 此拦截器拦截run()方法，run()方法执行异步任务
  * 
- * Pinpoint provides {@link AsyncContextSpanEventSimpleAroundInterceptor} which handles all the chores related to
- * continuing traces beyond thread boundaries.
+ * Pinpoint 提供{@link AsyncContextSpanEventSimpleAroundInterceptor} ，它处理了与线程边界之外的连续跟踪有关的所有琐事
  * <br/>
- * {@link AsyncContextSpanEventSimpleAroundInterceptor} retrieves the {@link AsyncContext} from the target (this) object
- * via {@link AsyncContextAccessor}.
- * Therefore the target class <strong>must</strong> be transformed to be an instance of <tt>AsyncContextAccessor</tt>
- * and have the <tt>AsyncContext</tt> field.
+ * {@link AsyncContextSpanEventSimpleAroundInterceptor} 通过via {@link AsyncContextAccessor}从目标对象获取{@link AsyncContext}
+ * 因此目标类必须能够转换成<tt>AsyncContextAccessor</tt>对象，并且有<tt>AsyncContext</tt> 字段。
  * <br/>
- * In this sample, {@link WorkerConstructorInterceptor} sets the <tt>AsyncContext</tt> to <tt>this</tt> object.
+ * 在这个例子中{@link WorkerConstructorInterceptor} 设置<tt>AsyncContext</tt> 到自身this对象，即传递给父类.
  * 
  * @author Jongho Moon
  */

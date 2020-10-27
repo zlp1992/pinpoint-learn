@@ -30,9 +30,9 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 import static com.navercorp.pinpoint.common.util.VarArgs.va;
 
 /**
- * If you want to add the same interceptor to multiple methods, use {@link MethodFilter}.
+ * 如果你想给多个方法添加相同的拦截器，使用 {@link MethodFilter}.
  * 
- * {@link MethodFilters} provides factory methods for pre-defined filters.
+ * {@link MethodFilters} 提供工厂方法，获取预定义的filters
  */
 public class Sample_07_Use_MethodFilter_To_Intercept_Multiple_Methods implements TransformCallback {
 
@@ -40,13 +40,13 @@ public class Sample_07_Use_MethodFilter_To_Intercept_Multiple_Methods implements
     public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
 
-        // Get target methods filtered by name.
+        // 通过过滤方法的名称获取方法
         for (InstrumentMethod method : target.getDeclaredMethods(MethodFilters.name("recordMe"))) {
-            // Add interceptor to each method. Note that each method will be injected with a dedicated interceptor instance.
+            // 给每个方法添加拦截器，注意每个方法会注入各自独立的拦截器实例（即这些方法不会共享同一个拦截器实例）
             method.addInterceptor(BasicMethodInterceptor.class, va(SamplePluginConstants.MY_SERVICE_TYPE));
         }
         
-        // To force the methods to share the same interceptor instance, use addInterceptor(int) like this.
+        // 如果你想让方法使用同一个拦截器实例，像下面一样使用addInterceptor(int) 方法，参数是添加拦截器后返回的pinpoint中的拦截器唯一标识id
         int interceptorId = -1;
         for (InstrumentMethod method : target.getDeclaredMethods(MethodFilters.name("logMe"))) {
             if (interceptorId == -1) {

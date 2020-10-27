@@ -22,8 +22,8 @@ import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 
 /**
- * The interceptor needs to record the value of field <tt>hiddenField</tt> that is hidden. Luckily, we have added a
- * getter method for this {@link HiddenFieldGetter} so that we can access it during runtime.
+ * 这个拦截器需要记录目标类中未公开的字段<tt>hiddenField</tt>的值。
+ * 幸运的是，通过添加一个getter方法{@link HiddenFieldGetter}，我们可以在运行时访问这个字段
  */
 public class RecordFieldInterceptor implements AroundInterceptor {
     private final MethodDescriptor descriptor;
@@ -58,7 +58,7 @@ public class RecordFieldInterceptor implements AroundInterceptor {
             recorder.recordApi(descriptor);
             recorder.recordException(throwable);
             
-            // Cast the object of instrumented class to the getter type to get the value. 
+            // 将织入的目标类转换成getter类型以便获取字段的值
             String fieldValue = ((HiddenFieldGetter)target)._$PREFIX$_getValue();
             recorder.recordAttribute(SamplePluginConstants.ANNOTATION_KEY_MY_VALUE, fieldValue);
         } finally {

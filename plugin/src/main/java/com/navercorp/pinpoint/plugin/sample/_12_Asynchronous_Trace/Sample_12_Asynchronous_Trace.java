@@ -32,26 +32,24 @@ import com.navercorp.pinpoint.plugin.sample.SamplePluginConstants;
 import static com.navercorp.pinpoint.common.util.VarArgs.va;
 
 /**
- * To trace an async invocation you have to
+ * 为了追踪异步调用，你需要：
  * <ol>
  *     <li>
- *         Intercept a method initiating an async task and create/record a new
- *         {@link AsyncContext}.
+ *         拦截初始化异步任务的方法同时创建或者记录一个新的{@link AsyncContext}.
  *     </li>
  *     <li>
- *         Pass the <tt>AsyncContext</tt> to the handler of the async task.
+ *         将<tt>AsyncContext</tt> 传递到处理异步任务的地方
  *     </li>
  *     <li>
- *         Add a field with {@link AsyncContextAccessor} to the class handling the async task.
+ *         通过{@link AsyncContextAccessor}给处理异步任务的类添加字段
  *     </li>
  *     <li>
- *         Intercept a method handling the async task with an interceptor extending
- *         {@link AsyncContextSpanEventSimpleAroundInterceptor}.
+ *         继承{@link AsyncContextSpanEventSimpleAroundInterceptor}实现拦截器拦截处理异步任务的方法
  *     </li>
  * </ol>
+ * 在这个例子中，{@link AsyncInitiator}转换 {@link com.navercorp.plugin.sample.target.TargetClass12_AsyncInitiator}，TargetClass12_AsyncInitiator初始化了异步任务
  *
- * In this sample, {@link AsyncInitiator} transforms TargetClass12_AsyncInitiator, which initiates async task.
- * {@link Worker} transforms TargetClass12_Worker, which handles async task initiated by TargetClass12_AsyncInitiator.
+ * {@link Worker} 转换 {@link com.navercorp.plugin.sample.target.TargetClass12_Worker}, TargetClass12_Worker处理TargetClass12_AsyncInitiator初始化的异步任务
  */
 public class Sample_12_Asynchronous_Trace {
     private static final String SCOPE_NAME = "AsyncSample";
@@ -59,7 +57,8 @@ public class Sample_12_Asynchronous_Trace {
     public static class AsyncInitiator implements TransformCallback {
         @Override
         public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
-            // Scope interceptors to pass AsyncTraceId as interceptor scope invocation attachment.
+            // 范围interceptors 将 AsyncTraceId 作为 拦截器范围调用附件（interceptor scope invocation attachment）
+            // 参见Sample04 Interceptor_Scope_Data_Sharing
             InterceptorScope scope = instrumentor.getInterceptorScope(SCOPE_NAME);
 
             InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);

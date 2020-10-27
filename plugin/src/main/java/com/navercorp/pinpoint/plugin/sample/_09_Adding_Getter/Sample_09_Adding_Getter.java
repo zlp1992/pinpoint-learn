@@ -22,8 +22,8 @@ import com.navercorp.pinpoint.bootstrap.instrument.Instrumentor;
 import com.navercorp.pinpoint.bootstrap.instrument.transformer.TransformCallback;
 
 /**
- * Sometimes you need access to the value of a private field that is not exposed by the class.
- * You can add a getter to access to it for this.
+ * 有时候，你想获取目标类中私有的未暴露（比如类本身没有提供get方法等）的字段
+ * 你可以通过pinpoint添加一个getter
  */
 public class Sample_09_Adding_Getter implements TransformCallback {
 
@@ -31,6 +31,7 @@ public class Sample_09_Adding_Getter implements TransformCallback {
     public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
         InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
 
+        //这里的Getter用于获取目标类中私有字段 hiddenField
         target.addGetter(HiddenFieldGetter.class, "hiddenField");
         target.getDeclaredMethod("targetMethod").addInterceptor(RecordFieldInterceptor.class);
 

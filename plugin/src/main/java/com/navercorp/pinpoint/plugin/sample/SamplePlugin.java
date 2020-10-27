@@ -34,9 +34,9 @@ import com.navercorp.pinpoint.plugin.sample._13_RPC_Client.Sample_13_RPC_Client;
 import com.navercorp.pinpoint.plugin.sample._14_RPC_Server.Sample_14_RPC_Server;
 
 /**
- * Any Pinpoint profiler plugin must implement ProfilerPlugin interface.
- * ProfilerPlugin declares only one method {@link #setup(ProfilerPluginSetupContext)}.
- * You should implement the method to do whatever you need to setup your plugin with the passed ProfilerPluginSetupContext object.
+ * 任何Pinpoint的分析插件必须实现ProfilerPlugin接口
+ * ProfilerPlugin只有一个方法 {@link #setup(ProfilerPluginSetupContext)}
+ * 你应该实现这个方法，然后通过pinpoint自动注入的ProfilerPluginSetupContext对象对你的插件做一些必要的设置
  * 
  * @author Jongho Moon
  */

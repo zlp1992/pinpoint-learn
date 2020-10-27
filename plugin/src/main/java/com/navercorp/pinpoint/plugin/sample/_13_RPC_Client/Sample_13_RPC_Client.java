@@ -22,9 +22,9 @@ import com.navercorp.pinpoint.bootstrap.instrument.Instrumentor;
 import com.navercorp.pinpoint.bootstrap.instrument.transformer.TransformCallback;
 
 /**
- * To trace a transaction across nodes, you have to attach some tracing data to RPC calls. This example shows how.
+ * 为了追踪跨节点（可以理解为跨应用）链路，你必须在rpc调用上附加一些数据. 这里例子展示了如何实现
  * <p>
- * Target classes are just for this example. They are not real RPC client.
+ *     目标类仅仅是例子，并不是真是的rpc客户端
  */
 public class Sample_13_RPC_Client implements TransformCallback {
 
